@@ -15,8 +15,6 @@ dialogflow3.setConfiguration = async function (clientEmail, privateKey, language
     dialogflow3.sessionId = dialogflow3.sessionId ? dialogflow3.sessionId : dialogflow3.guid();
     dialogflow3.agentId = agentId;
     dialogflow3.locationId = locationId;
-    dialog
-
 }
 
 export { dialogflow3 as Dialogflow_V3 };
