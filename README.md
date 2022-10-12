@@ -1,263 +1,116 @@
 # react-native-dialogflow (react-native-api-ai)
 
-[![Build Status](https://travis-ci.org/innFactory/react-native-dialogflow.svg?branch=master)](https://www.npmjs.com/package/react-native-dialogflow)
-[![Version](https://img.shields.io/npm/v/react-native-dialogflow.svg)](https://www.npmjs.com/package/react-native-dialogflow)
-[![Downloads](https://img.shields.io/npm/dt/react-native-dialogflow.svg)](https://www.npmjs.com/package/react-native-dialogflow)
+## Upgraded to DialogFlow CX V3, for Expo Managed React Native Apps by Stuart Mainwaring
+
+# Additions dialogflowConfig parameters in your env.js file are:
+locationId
+agentId
 
 
-A React-Native Bridge for the Google Dialogflow AI SDK.
+## To install
+yarn install from GitHub
 
-<img src="header_img.png" alt="Header Image"/>
+## Example usage
 
-Support for iOS 10+ and Android!
+### Create a env.js file that contains your Service Account JSON and add in the following additional parameters:
+locationId
+agentId
 
-[Dialogflow](https://dialogflow.com/) is a powerful tool for building delightful and natural conversational experiences. You can build chat and speech bots and may intergrate it in a lot of platform like twitter, facebook, slack, or alexa.
 
-## Install
+### Example App with react-native-gifted-chat
 
-This package depends on react-native-voice, follow their readme to setup it.
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
+import { Dialogflow_V3 } from 'react-native-dialogflow';
 
-Add react-native-dialogflow and link it:
-```
-npm install --save react-native-dialogflow react-native-voice
+import { dialogflowConfig } from './env';
 
-react-native link react-native-dialogflow
-react-native link react-native-voice
+const BOT_USER = {
+	_id: 2,
+	name: 'FAQ Bot',
+	avatar: 'https://i.imgur.com/7k12EPD.png'
+};
 
-```
+class App extends Component {
+	state = {
+    msgCounter:1,
+		messages: [
+			{
+				_id: 1,
+				text: `Hi! I am the FAQ bot 🤖 from Jscrambler.\n\nHow may I help you with today?`,
+				createdAt: new Date(),
+				user: BOT_USER
+			}
+		]
+	};
 
-### iOS: IMPORTANT xCode plist settings
+	componentDidMount() {
+		Dialogflow_V3.setConfiguration(
+			dialogflowConfig.client_email,
+			dialogflowConfig.private_key,
+			Dialogflow_V3.LANG_ENGLISH_US,
+			dialogflowConfig.project_id,
+            dialogflowConfig.locationId,
+            dialogflowConfig.agentId
+		);
+	}
 
-Also, you need open the React Native xCode project and add two new keys into `Info.plist`
-Just right click on `Info.plist` -> `Open As` -> `Source Code` and paste these strings somewhere into root `<dict>` tag
+	handleGoogleResponse(result) {
+    // Text Response
+    try {
 
-```xml
-<key>NSSpeechRecognitionUsageDescription</key>
-<string>Your usage description here</string>
-<key>NSMicrophoneUsageDescription</key>
-<string>Your usage description here</string>
-```
+      let text = result.queryResult.responseMessages[0].text.text[0];
 
-Application will crash if you don't do this.
+      let msg = {
+        _id: this.state.messages.length + 1,
+        text,
+        createdAt: new Date(),
+        user: BOT_USER
+      };
 
-## Usage
-Import Dialogflow:
-```javascript
-import Dialogflow from "react-native-dialogflow";
-```
-or for V2
-```javascript
-import { Dialogflow_V2 } from "react-native-dialogflow"
-```
+      this.sendBotResponse(msg);
 
-### Configuration
-Set the `accessToken` and the language in your constructor:
-```javascript
- constructor(props) {
-        super(props);
-
-        Dialogflow.setConfiguration(
-          "4xxxxxxxe90xxxxxxxxc372", Dialogflow.LANG_GERMAN
-        );
+    } catch {
+      let payload = result.queryResult.responseMessages[0].payload;
+      payload._id = this.state.messages.length + 1;
+      this.sendBotResponse(payload);
     }
-
-```
-
-For V2 you can set the `client_email` and `private_key` of the credential json [auth setup](https://dialogflow.com/docs/reference/v2-auth-setup). In addition you have to set your projectId:
-```javascript
- constructor(props) {
-        super(props);
-
-        Dialogflow_V2.setConfiguration(
-            "your-dialogflow-project@asdf-76866.iam.gserviceaccount.com",
-            '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADAN...1oqO\n-----END PRIVATE KEY-----\n',
-            Dialogflow_V2.LANG_GERMAN,
-            'testv2-3b5ca'
-        );
-    }
-
-```
-
-
-### Listening
-Start listening with integrated speech recognition:
-```javascript
-   <Button onPress={() => {
-            Dialogflow.startListening(result=>{
-                console.log(result);
-            }, error=>{
-                console.log(error);
-            });
-        }}
-   />
-```
-In iOS only you have to call `finishListening()`. Android detects the end of your speech automatically. That's the reason why we didn't implement the finish method in Android.
-```javascript
-// only for iOS
-Dialogflow.finishListening();
-// after this call your callbacks from the startListening will be executed.
-```
-
-### Text Request
-For using your own speech recognition:
-```javascript
-   <Button onPress={() => {
-           Dialogflow.requestQuery("Some text for your Dialogflow agent", result=>console.log(result), error=>console.log(error));
-        }}
-   />
-```
-
-### Request an Event
-For sending an [event](https://api.ai/docs/events) to Dialogflow _(Contexts and Entities have no effect!)_:
-```javascript
-Dialogflow.requestEvent(
-    "WELCOME",
-    {param1: "yo mr. white!"},
-    result=>{console.log(result);},
-    error=>{console.log(error);}
-);
-```
-
-
-### Contexts
-Set [contexts](https://api.ai/docs/reference/agent/contexts) (will take affect on next startListening or queryRequest):
-```javascript
-const contexts = [{
-  name: "deals",
-  lifespan: 1,
-  parameters: {
-      Shop: "Rewe"
   }
-}];
-
-Dialogflow.setContexts(contexts);
-```
-
-Reset all (non-permantent) contexts for current session:
-```javascript
-Dialogflow.resetContexts(result=>{
-       console.log(result);
-    }, error=>{
-       console.log(error);
-    });
-```
-
-Set permanent contexts, which will be set automatically before every request. This is useful for e.g. access tokens in webhooks:
-```javascript
-const permanentContexts = [{
-  name: "Auth",
-  // lifespan 1 is set automatically, but it's overrideable
-  parameters: {
-      AccessToken: "1234yo1234"
-  }
-}];
-
-Dialogflow.setPermanentContexts(permanentContexts);
-```
-
-### Entities
-Set [UserEntities](https://api.ai/docs/reference/agent/userentities) (will take affect on next startListening or queryRequest):
-```javascript
-const entities = [{
-  "name":"shop",
-  "extend":true,
-  "entries":[
-      {
-          "value":"Media Markt",
-          "synonyms":["Media Markt"]
-      }
-  ]
- }];
-
- Dialogflow.setEntities(entities);
-```
 
 
-### Listener for Android
-Only in Android we have four additional methods: `onListeningStarted`, `onListeningCanceled`, `onListeningFinished` and `onAudioLevel`. In iOS they will be never called:
-```javascript
-   <Button onPress={() => {
+	onSend(messages = []) {
+		this.setState(previousState => ({
+			messages: GiftedChat.append(previousState.messages, messages)
+		}));
 
-            Dialogflow.onListeningStarted(()=>{
-                console.log("listening started");
-            });
+		let message = messages[0].text;
+		Dialogflow_V3.requestQuery(
+			message,
+			result => this.handleGoogleResponse(result),
+			error => console.log("err:",error)
+		);
+	}
 
-            Dialogflow.onListeningCanceled(()=>{
-                console.log("listening canceled");
-            });
+	sendBotResponse(msg) {
+		this.setState(previousState => ({
+			messages: GiftedChat.append(previousState.messages, [msg])
+		}));
+	}
 
-            Dialogflow.onListeningFinished(()=>{
-                console.log("listening finished");
-            });
+	render() {
+		return (
+			<View style={{ flex: 1, backgroundColor: '#fff' }}>
+				<GiftedChat
+					messages={this.state.messages}
+					onSend={messages => this.onSend(messages)}
+					user={{
+						_id: 1
+					}}
+				/>
+			</View>
+		);
+	}
+}
 
-            Dialogflow.onAudioLevel(level=>{
-                console.log(level);
-            });
-
-
-            Dialogflow.startListening(result=>{
-                console.log(result);
-            }, error=>{
-                console.log(error);
-            });
-        }}
-   />
-```
-Note: Make sure you are setting the callbacks before startListening every single time again. Don't set the callbacks in e.g. constructor or componentsDidMount if you are executing startListening more than one times.
-
-
-## Supported Languages
-Set the language in your configuration:
-```javascript
-Dialogflow.setConfiguration("4xxxxxxxe90xxxxxxxxc372", Dialogflow.LANG_GERMAN);
-```
-* LANG_CHINESE_CHINA
-* LANG_CHINESE_HONGKONG
-* LANG_CHINESE_TAIWAN
-* LANG_DUTCH
-* LANG_ENGLISH
-* LANG_ENGLISH_GB
-* LANG_ENGLISH_US
-* LANG_FRENCH
-* LANG_GERMAN
-* LANG_ITALIAN
-* LANG_JAPANESE
-* LANG_KOREAN
-* LANG_PORTUGUESE
-* LANG_PORTUGUESE_BRAZIL
-* LANG_RUSSIAN
-* LANG_SPANISH
-* LANG_UKRAINIAN
-
-## Methods
-| name                  | platform | param1    | param2    | param3    | param4    |
-| --------------------- | -------- | --------- | --------- | --------- | --------- |
-| `setConfiguration` (V1)   | both     | accessToken: String | languageTag: String  |
-| `setConfiguration` (V2)    | both     | client_email: String | private_key: String | languageTag: String | projectId: String |
-| `startListening`      | both     | resultCallback: (result: object)=>{} | errorCallback: (error: object)=>{}  | |
-| `finishListening`     | ios      |  |   | |
-| `requestQuery`        | both     | query: String |  resultCallback: (result: object)=>{} | errorCallback: (error: object)=>{}   |
-| `requestEvent`        | both     | eventName: String | eventData: Object | resultCallback: (result: object)=>{} | errorCallback: (error: object)=>{}   |
-| `onListeningStarted`  | both  | callback: ()=>{}    | | |
-| `onListeningCanceled` | none  | callback: ()=>{}    || |
-| `onListeningFinished` | both  | callback: ()=>{}    | | |
-| `onAudioLevel`        | android  | callback: (level: number)=>{}    || |
-| `setContexts`         | both     | array    || |
-| `resetContexts`       | both     | resultCallback: (result: object)=>{} | errorCallback: (error: object)=>{} | |
-| `setPermanentContexts`| both     | array    || |
-| `setEntities` (V1 only)| both     | array    || |
-
-
-## Blogpost
-
-### Deutsch
-[Sprachsteuerung mit Api.ai in einer React-Native App](https://innfactory.de/de/blog/34-software-engineering/65-sprachsteuerung-mit-api-ai-in-einer-react-native-app)
-### English
-
-## Contributors
-
-* [Anton Spöck](https://github.com/spoeck)
-* [Tobias Jonas](https://github.com/jona7o)
-* [Maximilian Grassl](https://github.com/innGrassl)
-
-Powered by [innFactory](https://innfactory.de/)
+export default App;
