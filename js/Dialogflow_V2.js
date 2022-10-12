@@ -6,18 +6,6 @@ export const DEFAULT_BASE_URL = "https://dialogflow.googleapis.com/v2beta1/proje
 
 export class Dialogflow_V2 {
 
-    onListeningStarted(callback) {
-        this.onListeningStarted = callback;
-    }
-
-    onListeningCanceled(callback) {
-        this.onListeningCanceled = callback;
-    }
-
-    onListeningFinished(callback) {
-        this.onListeningFinished = callback;
-    }
-
     setContexts(contexts) {
         var array = contexts;
 
@@ -63,9 +51,7 @@ export class Dialogflow_V2 {
     }
     */
 
-    onAudioLevel(callback) {
-
-    }
+  
 
     requestEvent = async (eventName, eventParameters, onResult, onError) => {
 
