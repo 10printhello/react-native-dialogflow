@@ -2,7 +2,7 @@
 
 import googleAuth from './googleAuth/GoogleAuth';
 import ResetContextsRequest from './ResetContextsRequest';
-export const DEFAULT_BASE_URL = "https://us-central1-dialogflow.googleapis.com/v3/projects/";
+export const DEFAULT_BASE_URL = "https://dialogflow.googleapis.com/v3/projects/locations/";
 
 export class Dialogflow_V2 {
 
