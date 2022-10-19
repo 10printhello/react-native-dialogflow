@@ -1,5 +1,6 @@
 'use strict';
 
+import { Dialogflow_V2 } from './js/Dialogflow_V2';
 import { Dialogflow_V3 } from './js/Dialogflow_V3';
 
 
