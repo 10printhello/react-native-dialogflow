@@ -106,8 +106,10 @@ export class Dialogflow_V2 {
 
         this.contexts = null;
         this.entities = null;
+        
+        const queryUrl = DEFAULT_BASE_URL + this.projectId + "/agent/sessions/" + this.sessionId + ":detectIntent";
 
-        fetch(DEFAULT_BASE_URL + this.projectId + "/agent/sessions/" + this.sessionId + ":detectIntent", {
+        fetch(queryUrl, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
