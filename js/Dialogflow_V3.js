@@ -17,9 +17,10 @@ export class Dialogflow_V3 {
    
             const _new = {}
             _new[key] =  value.encode(parameters[key])
-            console.log("new:", _new)
             _params.push(_new)
         })
+
+        this.parameters = _params;
         
     }
 
@@ -105,7 +106,8 @@ export class Dialogflow_V3 {
         const data = {
             "queryParams": {
                 "contexts": this.mergeContexts(this.contexts, this.permanentContexts),
-                "sessionEntityTypes": []
+                "sessionEntityTypes": [],
+                "parameters": this.parameters
             },
             "queryInput": {
                 "languageCode": "en-GB",
