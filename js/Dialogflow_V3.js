@@ -16,10 +16,9 @@ export class Dialogflow_V3 {
         Object.entries(parameters).forEach(([key, v]) => {
    
             const _new = {}
-            _params[key] =  value.encode(parameters[key])
+            _params[key] =  parameters[key]
    
         })
-
 
         this.parameters = _params;
         
