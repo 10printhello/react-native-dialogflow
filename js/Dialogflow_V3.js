@@ -10,14 +10,12 @@ export class Dialogflow_V3 {
     setParameters(parameters) {
         // Take dict parameters e.g. {"email":"test@test.com"} and put them into struct format
         const _params = [];
-        if (parameters) {
-
-            parameters.forEach((k,v) => {
-                const res = {k: value.encode(v)}
-                console.log("res:", res)
-                _params.push(res)
-            })
-        }
+        Object.keys(parameters).forEach(function(key) {
+            const _new = { key : value.encode(data[key])}
+            console.log("new:", _new)
+            _params.push(_new)
+        })
+        
     }
 
     setContexts(contexts) {
