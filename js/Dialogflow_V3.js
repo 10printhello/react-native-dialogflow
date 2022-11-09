@@ -11,7 +11,7 @@ export class Dialogflow_V3 {
         // Take dict parameters e.g. {"email":"test@test.com"} and put them into struct format
         const _params = [];
         Object.keys(parameters).forEach(function(key) {
-            const _new = { key : value.encode(data[key])}
+            const _new = { key : value.encode(parameters[key])}
             console.log("new:", _new)
             _params.push(_new)
         })
