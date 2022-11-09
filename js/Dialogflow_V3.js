@@ -13,7 +13,7 @@ export class Dialogflow_V3 {
         // {"email": "stuart@test.com", "name": "stuart".....}
         const _params = [];
 
-        Object.entries(parameters).forEach(([key, value]) => {
+        Object.entries(parameters).forEach(([key, v]) => {
             const _new = { key : value.encode(parameters[key])}
             console.log("new:", _new)
             _params.push(_new)
