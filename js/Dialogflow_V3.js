@@ -8,9 +8,12 @@ export const DEFAULT_BASE_URL = "https://us-central1-dialogflow.googleapis.com/v
 export class Dialogflow_V3 {
 
     setParameters(parameters) {
-        // Take dict parameters e.g. {"email":"test@test.com"} and put them into struct format
+        // Take dict parameters  and put them into struct format
+        // format is json dict : 
+        // {"email": "stuart@test.com", "name": "stuart".....}
         const _params = [];
-        Object.keys(parameters).forEach(function(key) {
+
+        Object.entries(parameters).forEach(([key, value]) => {
             const _new = { key : value.encode(parameters[key])}
             console.log("new:", _new)
             _params.push(_new)
