@@ -6,6 +6,14 @@ export const DEFAULT_BASE_URL = "https://us-central1-dialogflow.googleapis.com/v
 
 export class Dialogflow_V3 {
 
+    setParameters(parameters) {
+        // Take dict parameters e.g. {"email":"test@test.com"} and put them into struct format
+
+        parameters.forEach((k,v) => {
+            console.log("key:",k," /val:", v)
+        })
+    }
+
     setContexts(contexts) {
         var array = contexts;
 
