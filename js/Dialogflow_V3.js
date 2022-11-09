@@ -1,5 +1,6 @@
 'use strict';
 
+import { value } from 'pb-util/build';
 import googleAuth from './googleAuth/GoogleAuth';
 import ResetContextsRequest from './ResetContextsRequest';
 export const DEFAULT_BASE_URL = "https://us-central1-dialogflow.googleapis.com/v3/projects/";
@@ -8,10 +9,15 @@ export class Dialogflow_V3 {
 
     setParameters(parameters) {
         // Take dict parameters e.g. {"email":"test@test.com"} and put them into struct format
+        const _params = [];
+        if (parameters) {
 
-        parameters.forEach((k,v) => {
-            console.log("key:",k," /val:", v)
-        })
+            parameters.forEach((k,v) => {
+                const res = {k: value.encode(v)}
+                console.log("res:", res)
+                _params.push(res)
+            })
+        }
     }
 
     setContexts(contexts) {
