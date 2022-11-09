@@ -11,14 +11,15 @@ export class Dialogflow_V3 {
         // Take dict parameters  and put them into struct format
         // format is json dict : 
         // {"email": "stuart@test.com", "name": "stuart".....}
-        const _params = [];
+        const _params = {};
 
         Object.entries(parameters).forEach(([key, v]) => {
    
             const _new = {}
-            _new[key] =  value.encode(parameters[key])
-            _params.push(_new)
+            _params[key] =  value.encode(parameters[key])
+   
         })
+
 
         this.parameters = _params;
         
